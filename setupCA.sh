@@ -31,6 +31,8 @@ function make_key {
 
   echo
   echo "=== generate key for ${CADIR} ==="
+  echo 
+  echo "NOTE! Be sure to specify a common name when asked."
   echo
 
   if [ ! -f ${CADIR}/private/cacert.key ]; then 
@@ -71,7 +73,7 @@ echo "=== Final Setup: Sign the Intermediate with the Root ==="
 echo
 
 openssl ca -config ROOT_CA/openssl.conf \
-           -extensions v3_req \
+           -extensions v3_ca \
            -out ./INTERMEDIATE_CA/cacert.pem \
            -infiles ./INTERMEDIATE_CA/csrs/intermediate.csr
 

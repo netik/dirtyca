@@ -69,7 +69,8 @@ echo
 
 
 # sign the request with the Intermediate CA
-openssl ca -config ${INTERMEDIATE_CONF} -policy policy_anything \
+openssl ca -config ${INTERMEDIATE_CONF} -policy policy_anything 
+    -extensions v3_req \
     -out ${CERTOUT} -infiles ${CSRFILE}
 
 # and store the server files in the certs/ directory<br />

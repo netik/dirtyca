@@ -217,7 +217,6 @@ authorityKeyIdentifier=keyid,issuer
 [ v3_req ]
 
 # Extensions to add to a certificate request
-
 basicConstraints = CA:FALSE
 keyUsage = nonRepudiation, digitalSignature, keyEncipherment
 
