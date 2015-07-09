@@ -1,7 +1,6 @@
 #!/bin/sh
 
-# have to do this or req fails miserably
-export OPENSSL_CONF=`pwd`/openssl-root.conf
+export INTERMEDIATE_CONF=`pwd`/CA/openssl.conf
 
 if [ "$1" == "" ]; then
   echo "usage: $0 fqdn.goes.here.com"
@@ -10,17 +9,15 @@ if [ "$1" == "" ]; then
 fi
 
 FQDN=$1
-CONF=`pwd`/CA/openssl.conf
-SANS=$2
 
-if [ -f CA/private/${FQDN}.key ]; then 
+if [ -f ./CA/private/${FQDN}.key ]; then 
   echo "${FQDN}.key exists. Remove it before re-generating."
   exit 1
 fi
 
 echo
 echo "=== genkey ==="
-openssl genrsa -out CA/private/${FQDN}.key 2048
+openssl genrsa -out ./CA/private/${FQDN}.key 2048
 
 echo
 echo "=== request csr ==="
@@ -36,17 +33,17 @@ ${FQDN}
 
 
 
-" | openssl req -new -key CA/private/${FQDN}.key -out CA/csrs/${FQDN}.csr 
+" | openssl req -config ${INTERMEDIATE_CONF} -new -key ./CA/private/${FQDN}.key -out ./CA/csrs/${FQDN}.csr 
 
 # debug: show us the req
-#openssl req -in CA/csrs/${FQDN}.csr -text | more
+#openssl req -in ./CA/csrs/${FQDN}.csr -text | more
 
 echo 
 echo "=== sign ==="
 
 # sign the request with the Intermediate CA
-openssl ca -config ${CONF} -policy policy_anything \
-    -out CA/certs/${FQDN}.cert -infiles CA/csrs/${FQDN}.csr
+openssl ca -config ${INTERMEDIATE_CONF} -policy policy_anything \
+    -out ./CA/certs/${FQDN}.cert -infiles ./CA/csrs/${FQDN}.csr
 
 # and store the server files in the certs/ directory<br />
 #mv ${FQDN}.csr ${FQDN}.cert certs/
