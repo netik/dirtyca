@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export INTERMEDIATE_CONF=`pwd`/CA/openssl.conf
+export INTERMEDIATE_CONF=`pwd`/INTERMEDIATE_CA/openssl.conf
 
 if [ "$1" == "" ]; then
   echo "usage: $0 fqdn.goes.here.com"
@@ -9,23 +9,25 @@ if [ "$1" == "" ]; then
 fi
 
 FQDN=$1
+KEYFILE=./INTERMEDIATE_CA/private/${FQDN}.key
+CSRFILE=./INTERMEDIATE_CA/csrs/${FQDN}.csr 
+CERTOUT=./INTERMEDIATE_CA/certs/${FQDN}.cert
 
-if [ -f ./CA/private/${FQDN}.key ]; then 
-  echo "${FQDN}.key exists. Remove it before re-generating."
+if [ -f ${KEYFILE} ]; then 
+  echo "${KEYFILE}.key exists. Remove it before re-generating."
   exit 1
 fi
 
 echo
 echo "=== genkey ==="
-openssl genrsa -config=${INTERMEDIATE_CONF} -out ./CA/private/${FQDN}.key 2048
-
+openssl genrsa -out ${KEYFILE} 2048
 
 echo
 echo "=== request csr ==="
 
-if [ ! -d ./CA/csrs ];
+if [ ! -d ./INTERMEDIATE_CA/csrs ];
 then
-  mkdir ./CA/csrs
+  mkdir ./INTERMEDIATE_CA/csrs
 fi
 
 # create request
@@ -39,19 +41,19 @@ ${FQDN}
 
 
 
-" | openssl req -config ${INTERMEDIATE_CONF} -new -key ./CA/private/${FQDN}.key -out ./CA/csrs/${FQDN}.csr 
-
-# debug: show us the req
-#openssl req -in ./CA/csrs/${FQDN}.csr -text | more
+" | openssl req -config ${INTERMEDIATE_CONF} -new -key ${KEYFILE} -out ${CSRFILE}
 
 echo 
 echo "=== sign ==="
 
 # sign the request with the Intermediate CA
 openssl ca -config ${INTERMEDIATE_CONF} -policy policy_anything \
-    -out ./CA/certs/${FQDN}.cert -infiles ./CA/csrs/${FQDN}.csr
+    -out ${CERTOUT} -infiles ${CSRFILE}
 
 # and store the server files in the certs/ directory<br />
 #mv ${FQDN}.csr ${FQDN}.cert certs/
 
 echo "=== done ==="
+
+echo "Certificate is available in:"
+echo ${CERTOUT}
