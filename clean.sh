@@ -4,4 +4,5 @@ echo "This will destroy the CA and all keys, press enter to continue or ^C to ab
 
 read FOO
 
-rm -rf CA/*
+rm -rf ROOT_CA
+rm -rf INTERMEDIATE_CA
