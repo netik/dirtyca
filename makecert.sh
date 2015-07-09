@@ -19,8 +19,14 @@ echo
 echo "=== genkey ==="
 openssl genrsa -out ./CA/private/${FQDN}.key 2048
 
+
 echo
 echo "=== request csr ==="
+
+if [ ! -d ./CA/csrs ];
+then
+  mkdir ./CA/csrs
+fi
 
 # create request
 echo "
