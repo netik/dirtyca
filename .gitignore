@@ -1,1 +1,3 @@
-CA/
+*.pem
+INTERMEDIATE_CA
+ROOT_CA
