@@ -17,7 +17,7 @@ fi
 
 echo
 echo "=== genkey ==="
-openssl genrsa -out ./CA/private/${FQDN}.key 2048
+openssl genrsa -config=${INTERMEDIATE_CONF} -out ./CA/private/${FQDN}.key 2048
 
 
 echo
