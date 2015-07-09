@@ -36,9 +36,7 @@ ${FQDN}
 
 
 
-" 
-
- openssl req -new -key CA/private/${FQDN}.key -out CA/csrs/${FQDN}.csr 
+" | openssl req -new -key CA/private/${FQDN}.key -out CA/csrs/${FQDN}.csr 
 
 # debug: show us the req
 #openssl req -in CA/csrs/${FQDN}.csr -text | more
